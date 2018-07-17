@@ -27,7 +27,7 @@ $(document)
         }
         renderTodoList = () => {
             return todoList.map(i => {
-                return `<li id="${i.id}" class="${i.isChecked ? 'checked' : ''}">
+                return `<li id="${i.id}" class="${i.isChecked ? 'checked' : ''}" ondblclick="editItem(event, '${i.id}')">
                 <input name="done-todo" type="checkbox" class="done-todo"> ${i.content} </li>`
             })
         }
@@ -67,7 +67,7 @@ $(document)
             }
 
         }
-        render();
+
         $(document).on("change", ".done-todo", function (event) { //on the change of check
             if ($(this).is(":checked")) {
                 $(this).parent().addClass("checked");
@@ -92,7 +92,20 @@ $(document)
         });
 
 
-        $(document).on("click", "ol li", function () {
-            $(this).attr("contenteditable", true);
-        });
+        window.editItem = (event, viewId) => {
+            $(event.target).attr('contentEditable', 'true')
+                .focus()
+                .keypress(function (event) {
+                    var keycode = (event.keyCode
+                        ? event.keyCode
+                        : event.which);
+
+                    if (keycode == '13') {
+                        todoList.find(element => element.id === viewId).name = $(event.target).text();
+                        render();
+                    }
+
+                })
+        }
+        render();
     });
